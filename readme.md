@@ -1,5 +1,7 @@
 # Color Palette Generator
 
+[View Live Page](https://sandrodevx.github.io/Generador-de-Paleta-de-Colores/)
+
 Welcome to the **Color Palette Generator**, an interactive web application that allows users to create, customize, and save beautiful color palettes. This tool is perfect for designers, developers, and anyone who loves working with colors. Generate random palettes, adjust colors manually, and export your favorite combinations for use in your projects.
 
 ---
