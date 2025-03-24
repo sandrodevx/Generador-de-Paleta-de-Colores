@@ -1,23 +1,56 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Paletas de Colores</title>
+    <meta name="description" content="Genera hermosas paletas de colores aleatorias y guarda tus favoritas">
+    <title>Generador de Paletas de Colores | Crea combinaciones únicas</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
-    <div class="container">
-        <h1>Generador de Paletas de Colores</h1>
-        <div class="palette" id="palette">
-            <!-- Colores generados dinámicamente -->
+    <header class="main-header" role="banner">
+        <div class="container">
+            <h1>Generador de Paletas de Colores</h1>
+            <p class="tagline">Crea combinaciones únicas para tus proyectos</p>
         </div>
-        <button id="generate-btn">Generar Paleta Aleatoria</button>
-        <div class="saved-palettes" id="saved-palettes">
-            <h2>Paletas Guardadas</h2>
-            <!-- Paletas guardadas dinámicamente -->
+    </header>
+
+    <main class="main-content" role="main">
+        <div class="container">
+            <section class="color-generator" aria-labelledby="color-palette-heading">
+                <h2 id="color-palette-heading" class="visually-hidden">Paleta de colores actual</h2>
+                <div class="palette-grid" id="palette" role="list">
+                    <!-- Colores generados dinámicamente -->
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="generate-btn" class="btn btn-primary">
+                        <span aria-hidden="true">🎨</span> Generar Nueva Paleta
+                    </button>
+                    <button id="save-btn" class="btn btn-secondary">
+                        <span aria-hidden="true">💾</span> Guardar Paleta
+                    </button>
+                </div>
+            </section>
+
+            <section class="saved-palettes" aria-labelledby="saved-palettes-heading">
+                <h2 id="saved-palettes-heading">Tus Paletas Guardadas</h2>
+                <p class="no-palettes" id="empty-message">Aún no has guardado ninguna paleta</p>
+                <div class="palettes-container" id="saved-palettes" role="list">
+                    <!-- Paletas guardadas dinámicamente -->
+                </div>
+            </section>
         </div>
-    </div>
-    <script src="script.js"></script>
+    </main>
+
+    <footer class="main-footer" role="contentinfo">
+        <div class="container">
+            <p>© <span id="current-year"></span> Generador de Paletas de Colores</p>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
 </body>
 </html>
