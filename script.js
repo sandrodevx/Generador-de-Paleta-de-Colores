@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Paleta actual
     let currentPalette = [];
     
-    // Generar color hexadecimal aleatorio
+    // Generar color hexadecimal aleatorio (versión mejorada)
     function getRandomColor() {
         const letters = '0123456789ABCDEF';
         let color = '#';
@@ -47,84 +47,64 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Copiar al portapapeles al hacer clic
             colorCard.addEventListener('click', function() {
-                navigator.clipboard.writeText(color);
-                
-                // Feedback visual
-                const originalText = colorValue.textContent;
-                colorValue.textContent = '¡Copiado!';
-                colorValue.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
-                
-                setTimeout(() => {
-                    colorValue.textContent = originalText;
-                    colorValue.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-                }, 1000);
+                navigator.clipboard.writeText(color).then(() => {
+                    // Feedback visual
+                    const originalText = colorValue.textContent;
+                    colorValue.textContent = '¡Copiado!';
+                    colorValue.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+                    
+                    setTimeout(() => {
+                        colorValue.textContent = originalText;
+                        colorValue.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+                    }, 1000);
+                }).catch(err => {
+                    console.error('Error al copiar: ', err);
+                    // Fallback para navegadores que no soportan clipboard API
+                    colorValue.textContent = 'Selecciona y copia';
+                });
             });
         }
     }
     
     // Guardar la paleta actual
     function savePalette() {
-        if (currentPalette.length === 0) return;
+        if (currentPalette.length === 0) {
+            alert('Primero genera una paleta para guardar');
+            return;
+        }
         
+        // Obtener paletas existentes o inicializar array
         const savedPalettes = JSON.parse(localStorage.getItem('savedPalettes')) || [];
-        savedPalettes.push(currentPalette);
-        localStorage.setItem('savedPalettes', JSON.stringify(savedPalettes));
         
-        renderSavedPalettes();
+        // Verificar si la paleta ya existe
+        const paletteExists = savedPalettes.some(palette => 
+            JSON.stringify(palette) === JSON.stringify(currentPalette)
+        );
+        
+        if (paletteExists) {
+            alert('Esta paleta ya está guardada');
+            return;
+        }
+        
+        // Añadir nueva paleta
+        savedPalettes.push(currentPalette);
+        
+        // Guardar en localStorage
+        try {
+            localStorage.setItem('savedPalettes', JSON.stringify(savedPalettes));
+            renderSavedPalettes();
+            
+            // Feedback visual
+            saveBtn.textContent = '✓ Guardado';
+            setTimeout(() => {
+                saveBtn.textContent = '💾 Guardar Paleta';
+            }, 2000);
+        } catch (e) {
+            console.error('Error al guardar:', e);
+            alert('No se pudo guardar la paleta. El almacenamiento puede estar lleno.');
+        }
     }
     
     // Mostrar paletas guardadas
     function renderSavedPalettes() {
-        const savedPalettes = JSON.parse(localStorage.getItem('savedPalettes')) || [];
-        
-        if (savedPalettes.length === 0) {
-            emptyMessage.style.display = 'block';
-            savedPalettesContainer.innerHTML = '';
-            return;
-        }
-        
-        emptyMessage.style.display = 'none';
-        savedPalettesContainer.innerHTML = '';
-        
-        savedPalettes.forEach((palette, index) => {
-            const paletteElement = document.createElement('div');
-            paletteElement.className = 'saved-palette';
-            paletteElement.setAttribute('role', 'listitem');
-            
-            const colorsContainer = document.createElement('div');
-            colorsContainer.className = 'saved-colors';
-            
-            palette.forEach(color => {
-                const colorDiv = document.createElement('div');
-                colorDiv.className = 'saved-color';
-                colorDiv.style.backgroundColor = color;
-                colorDiv.setAttribute('aria-label', color);
-                colorsContainer.appendChild(colorDiv);
-            });
-            
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'btn btn-secondary';
-            deleteBtn.textContent = 'Eliminar';
-            deleteBtn.style.marginTop = '0.5rem';
-            deleteBtn.style.width = '100%';
-            
-            deleteBtn.addEventListener('click', function() {
-                savedPalettes.splice(index, 1);
-                localStorage.setItem('savedPalettes', JSON.stringify(savedPalettes));
-                renderSavedPalettes();
-            });
-            
-            paletteElement.appendChild(colorsContainer);
-            paletteElement.appendChild(deleteBtn);
-            savedPalettesContainer.appendChild(paletteElement);
-        });
-    }
-    
-    // Event listeners
-    generateBtn.addEventListener('click', generatePalette);
-    saveBtn.addEventListener('click', savePalette);
-    
-    // Inicializar
-    generatePalette();
-    renderSavedPalettes();
-});
+        let savedPalettes
